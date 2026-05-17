@@ -107,7 +107,8 @@
   }
 
   .logo-mark {
-    display: inline-flex;
+    display: flex;
+    justify-content: center;
     align-items: center;
     gap: 10px;
     margin-bottom: 1.5rem;
@@ -123,7 +124,7 @@
   .logo-text {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 600;
-    font-size: 15px;
+    font-size: clamp(13px, 3.6vw, 15px);
     letter-spacing: 6px;
     text-transform: uppercase;
     color: var(--gold);
@@ -418,9 +419,22 @@
 
   /* ── RESPONSIVE ── */
   @media (max-width: 500px) {
+    /* Mobile : le formulaire email passe juste sous le sous-titre,
+       au-dessus du séparateur ⛵ et de la citation (desktop inchangé) */
+    .header        { order: 1; }
+    .email-section { order: 2; }
+    .divider       { order: 3; }
+    .message-card  { order: 4; }
+    .yole-wrap     { order: 5; }
+    .footer        { order: 6; }
+
+    .main-title { font-size: clamp(2.5rem, 12vw, 3.25rem); }
+    .soon-badge { padding: 9px 18px; line-height: 1.6; }
+
     .message-card { padding: 1.8rem 1.5rem; }
     .email-form { flex-direction: column; border-radius: 14px; }
-    .email-btn { border-radius: 0 0 14px 14px; padding: 13px; }
+    .email-input { padding: 15px 20px; min-height: 48px; }
+    .email-btn { border-radius: 0 0 14px 14px; padding: 15px; min-height: 48px; }
   }
 </style>
 </head>
