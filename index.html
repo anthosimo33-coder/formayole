@@ -466,23 +466,28 @@
   <div class="email-section">
     <span class="email-label">Soyez informé·e en premier</span>
 
-    <form class="email-form" id="emailForm" action="VOTRE_URL_BREVO_ICI" method="POST">
+    <form class="email-form" id="emailForm" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="a28bc498-a3c3-48fc-b7eb-a1767ea1aec8" />
+      <input type="hidden" name="subject" value="Nouvelle inscription waiting list Forma'Yole" />
+      <input type="hidden" name="from_name" value="Forma'Yole - Waiting list" />
+      <input type="hidden" name="redirect" value="false" />
+      <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off" />
       <input
         class="email-input"
         type="email"
-        name="EMAIL"
+        name="email"
         placeholder="votre@email.fr"
         required
         autocomplete="email"
       />
-      <input type="hidden" name="email_address_check" value="" />
-      <input type="hidden" name="locale" value="fr" />
       <button class="email-btn" type="submit">Me prévenir →</button>
     </form>
 
     <div class="success-msg" id="successMsg">
-      ✦ &nbsp;Merci ! Vérifiez votre boîte mail.
+      ✓ &nbsp;Merci, vous êtes inscrit·e — vous serez informé·e en premier.
     </div>
+
+    <p class="privacy-note" id="formError" style="display:none; color:#E08A8A;">Une erreur est survenue, merci de réessayer.</p>
 
     <p class="privacy-note">Aucun spam. Vos données restent confidentielles.</p>
   </div>
@@ -529,27 +534,34 @@
 <script>
   const form = document.getElementById('emailForm');
   const successMsg = document.getElementById('successMsg');
+  const errorMsg = document.getElementById('formError');
+  const privacyNote = form.parentElement.querySelector('.privacy-note:not(#formError)');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('.email-btn');
-    const emailInput = form.querySelector('input[name="EMAIL"]');
-    btn.textContent = '...';
+    const originalLabel = btn.textContent;
+    errorMsg.style.display = 'none';
     btn.disabled = true;
+    btn.textContent = 'Envoi…';
 
     try {
-      // Brevo accepts cross-origin POST with form-data
-      await fetch(form.action, {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        mode: 'no-cors',
         body: new FormData(form)
       });
-      // no-cors prevents reading response, but Brevo will have processed
-      form.style.display = 'none';
-      successMsg.style.display = 'flex';
+      const data = await res.json();
+      if (res.ok && data.success) {
+        form.style.display = 'none';
+        if (privacyNote) privacyNote.style.display = 'none';
+        successMsg.style.display = 'flex';
+      } else {
+        throw new Error(data.message || 'submission failed');
+      }
     } catch {
-      btn.textContent = 'Réessayer';
       btn.disabled = false;
+      btn.textContent = originalLabel;
+      errorMsg.style.display = 'block';
     }
   });
 </script>
